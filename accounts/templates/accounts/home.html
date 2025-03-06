@@ -1,0 +1,136 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}Accueil - Gestion Emploi du Temps{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-blue-600 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div class="text-center">
+            <h1 class="text-4xl font-extrabold sm:text-5xl md:text-6xl">
+                Gestion simplifiée de votre emploi du temps
+            </h1>
+            <p class="mt-6 text-xl max-w-3xl mx-auto">
+                Une plateforme intuitive pour gérer les emplois du temps des étudiants et enseignants. Organisez, planifiez et suivez vos cours en toute simplicité.
+            </p>
+            <div class="mt-10 flex justify-center space-x-4">
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'register' %}" class="bg-white text-blue-600 px-8 py-3 rounded-md font-bold hover:bg-gray-100 transition">
+                        Commencer
+                    </a>
+                    <a href="{% url 'login' %}" class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-md font-bold hover:bg-white hover:text-blue-600 transition">
+                        Se connecter
+                    </a>
+                {% else %}
+                    <a href="{% if user.role == 'etudiant' %}{% url 'etudiant_dashboard' %}{% else %}{% url 'enseignant_dashboard' %}{% endif %}" 
+                       class="bg-white text-blue-600 px-8 py-3 rounded-md font-bold hover:bg-gray-100 transition">
+                        Accéder au tableau de bord
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                Fonctionnalités principales
+            </h2>
+            <p class="mt-4 text-lg text-gray-600">
+                Tout ce dont vous avez besoin pour une gestion efficace de votre emploi du temps
+            </p>
+        </div>
+
+        <div class="mt-20 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <!-- Feature 1 -->
+            <div class="flex flex-col items-center text-center">
+                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 text-blue-600">
+                    <i class="fas fa-calendar-alt text-2xl"></i>
+                </div>
+                <h3 class="mt-6 text-xl font-medium text-gray-900">Planning en temps réel</h3>
+                <p class="mt-2 text-gray-600">
+                    Consultez et gérez votre emploi du temps en temps réel. Recevez des notifications pour tout changement.
+                </p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="flex flex-col items-center text-center">
+                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 text-blue-600">
+                    <i class="fas fa-users text-2xl"></i>
+                </div>
+                <h3 class="mt-6 text-xl font-medium text-gray-900">Gestion des groupes</h3>
+                <p class="mt-2 text-gray-600">
+                    Organisation facile des groupes d'étudiants et attribution des enseignants aux classes.
+                </p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="flex flex-col items-center text-center">
+                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 text-blue-600">
+                    <i class="fas fa-bell text-2xl"></i>
+                </div>
+                <h3 class="mt-6 text-xl font-medium text-gray-900">Notifications</h3>
+                <p class="mt-2 text-gray-600">
+                    Soyez informé des changements d'emploi du temps, des absences et des événements importants.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Testimonials Section -->
+<div class="py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                Ce qu'ils en disent
+            </h2>
+        </div>
+        <div class="mt-20 grid grid-cols-1 gap-8 md:grid-cols-2">
+            <!-- Testimonial 1 -->
+            <div class="bg-white p-8 rounded-lg shadow-md">
+                <p class="text-gray-600">
+                    "Un outil indispensable pour la gestion de mes cours. L'interface est intuitive et me fait gagner beaucoup de temps."
+                </p>
+                <div class="mt-4">
+                    <p class="font-medium text-gray-900">Mr Mansaré</p>
+                    <p class="text-gray-600">Enseignante en Génie Logiciel</p>
+                </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="bg-white p-8 rounded-lg shadow-md">
+                <p class="text-gray-600">
+                    "Je peux facilement suivre mon emploi du temps et recevoir des notifications en cas de changement. C'est très pratique !"
+                </p>
+                <div class="mt-4">
+                    <p class="font-medium text-gray-900">Thomas Martin</p>
+                    <p class="text-gray-600">Étudiant en licence</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="bg-blue-600">
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
+        <h2 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+            <span class="block">Prêt à commencer ?</span>
+            <span class="block text-blue-200">Rejoignez-nous dès aujourd'hui.</span>
+        </h2>
+        <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0">
+            {% if not user.is_authenticated %}
+                <div class="inline-flex rounded-md shadow">
+                    <a href="{% url 'register' %}" class="bg-white text-blue-600 px-8 py-3 rounded-md font-bold hover:bg-gray-100 transition">
+                        S'inscrire gratuitement
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

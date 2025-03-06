@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gestion Emploi du Temps{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom styles -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+    
+    <!-- Script pour définir les classes personnalisées -->
+    <script>
+        // Configuration de Tailwind pour ajouter des classes personnalisées
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'custom-blue': '#2563EB',
+                        'custom-blue-dark': '#1D4ED8'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="flex flex-col min-h-screen bg-gray-50">
+    <!-- Navigation principale -->
+    <nav class="bg-gradient-to-r from-blue-700 to-blue-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo et titre -->
+                <div class="flex items-center">
+                    <a href="{% url 'home' %}" class="flex items-center space-x-2">
+                        <i class="fas fa-calendar-alt text-2xl"></i>
+                        <span class="text-xl font-bold tracking-tight">GestionEmploi</span>
+                    </a>
+                </div>
+
+                <!-- Menu principal -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        {% if user.is_authenticated %}
+                            {% if user.role == 'etudiant' %}
+                                <a href="{% url 'etudiant_dashboard' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition duration-300 ease-in-out">
+                                    <i class="fas fa-tachometer-alt mr-1"></i> Tableau de bord
+                                </a>
+                            {% elif user.role == 'enseignant' %}
+                                <a href="{% url 'enseignant_dashboard' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition duration-300 ease-in-out">
+                                    <i class="fas fa-tachometer-alt mr-1"></i> Tableau de bord
+                                </a>
+                            {% endif %}
+                            <a href="{% url 'logout' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition duration-300 ease-in-out">
+                                <i class="fas fa-sign-out-alt mr-1"></i> Déconnexion
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition duration-300 ease-in-out">
+                                <i class="fas fa-sign-in-alt mr-1"></i> Connexion
+                            </a>
+                            <a href="{% url 'register' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition duration-300 ease-in-out">
+                                <i class="fas fa-user-plus mr-1"></i> Inscription
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Menu mobile -->
+                <div class="md:hidden">
+                    <button type="button" class="mobile-menu-button inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-blue-700 focus:outline-none transition duration-300 ease-in-out">
+                        <span class="sr-only">Ouvrir le menu</span>
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu mobile (caché par défaut) -->
+        <div class="mobile-menu hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                {% if user.is_authenticated %}
+                    {% if user.role == 'etudiant' %}
+                        <a href="{% url 'etudiant_dashboard' %}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-700 transition duration-300 ease-in-out">
+                            <i class="fas fa-tachometer-alt mr-1"></i> Tableau de bord
+                        </a>
+                    {% elif user.role == 'enseignant' %}
+                        <a href="{% url 'enseignant_dashboard' %}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-700 transition duration-300 ease-in-out">
+                            <i class="fas fa-tachometer-alt mr-1"></i> Tableau de bord
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'logout' %}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-700 transition duration-300 ease-in-out">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Déconnexion
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-700 transition duration-300 ease-in-out">
+                        <i class="fas fa-sign-in-alt mr-1"></i> Connexion
+                    </a>
+                    <a href="{% url 'register' %}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-700 transition duration-300 ease-in-out">
+                        <i class="fas fa-user-plus mr-1"></i> Inscription
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages flash -->
+    {% if messages %}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+            {% for message in messages %}
+                <div class="rounded-md {% if message.tags == 'success' %}bg-green-100 border-l-4 border-green-500{% elif message.tags == 'error' %}bg-red-100 border-l-4 border-red-500{% else %}bg-blue-100 border-l-4 border-blue-500{% endif %} p-4 mb-4 shadow-sm">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            {% if message.tags == 'success' %}
+                                <i class="fas fa-check-circle text-green-600"></i>
+                            {% elif message.tags == 'error' %}
+                                <i class="fas fa-exclamation-circle text-red-600"></i>
+                            {% else %}
+                                <i class="fas fa-info-circle text-blue-600"></i>
+                            {% endif %}
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm {% if message.tags == 'success' %}text-green-800{% elif message.tags == 'error' %}text-red-800{% else %}text-blue-800{% endif %}">
+                                {{ message }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Contenu principal -->
+    <div class="flex-grow container mx-auto px-4 py-6">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-gray-800 to-gray-900 text-white mt-auto">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="font-medium flex items-center">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        GestionEmploi &copy; {% now "Y" %}
+                    </p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript pour le menu mobile -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.querySelector('.mobile-menu-button');
+            const mobileMenu = document.querySelector('.mobile-menu');
+
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+        });
+    </script>
+
+    <!-- Scripts supplémentaires -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

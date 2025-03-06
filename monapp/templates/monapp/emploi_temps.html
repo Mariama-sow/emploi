@@ -1,0 +1,109 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% load custom_filters %}  <!-- Charger vos filtres personnalisés -->
+
+{% block content %}
+<div class="min-h-screen bg-gray-100">
+    <!-- En-tête -->
+    <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">
+                        Emploi du Temps
+                    </h1>
+                    <p class="text-gray-600 mt-1">Centre Informatique Licence II DL - 4ème SEMESTRE</p>
+                </div>
+                <a href="{% url 'etudiant_dashboard' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    Retour au Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="bg-white overflow-hidden shadow rounded-lg p-6">
+            <div class="overflow-x-auto">
+                <table class="min-w-full border border-gray-400 text-sm">
+                    <thead class="bg-gray-200">
+                        <tr>
+                            <th class="border border-gray-400 px-4 py-2 font-bold">Horaire</th>
+                            {% for jour in jours %}
+                            <th class="border border-gray-400 px-4 py-2 font-bold">{{ jour|upper }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for heure in heures %}
+                        <tr class="text-center">
+                            <td class="border border-gray-400 px-4 py-2 font-medium">
+                                {{ heure }}h - {{ heure|add:"1" }}h
+                            </td>
+                            
+                            {% for jour in jours %}
+                            {% with displayed=False %}
+                                {% with cours_jour=emploi_temps|get_item:jour %}
+                                {% for cours in cours_jour %}
+                                        {% if cours.heureDebut.hour == heure %}
+                                            {% with duree=cours.heureFin.hour|subtract:cours.heureDebut.hour %}
+                                                <td class="border border-gray-400 px-2 py-1 align-top bg-blue-50" rowspan="{{ duree }}">
+                                                    <div class="p-1">
+                                                        <div class="font-medium">{{ cours.matiere }}</div>
+                                                        <div class="text-xs mt-1">
+                                                            {{ cours.heureDebut|time:"H:i" }} - {{ cours.heureFin|time:"H:i" }}
+                                                        </div>
+                                                        {% if cours.enseignant %}
+                                                        <div class="text-xs mt-1">{{ cours.enseignant.user.get_full_name }}</div>
+                                                        <div class="text-xs">{{ cours.enseignant.telephone|default:"" }}</div>
+                                                        {% endif %}
+                                                        {% if cours.salle %}
+                                                        <div class="text-xs mt-1">
+                                                            {% if cours.salle.type == 'amphitheatre' %}
+                                                                Amphi {{ cours.salle.numSalle }}
+                                                            {% else %}
+                                                                {% if cours.salle.batiment %}NB {% endif %}
+                                                                Salle {{ cours.salle.numSalle|default:"" }}
+                                                            {% endif %}
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                                {% with displayed=True %}{% endwith %}
+                                            {% endwith %}
+                                        {% elif not displayed %}
+                                            {% if not cours.heureDebut.hour < heure and cours.heureFin.hour > heure %}
+                                                <td class="border border-gray-400 px-2 py-1 bg-gray-100"></td>
+                                                {% with displayed=True %}{% endwith %}
+                                            {% endif %}
+                                        {% endif %}
+                                 {% endfor %}
+                                     
+                                    {% if not displayed %}
+                                        <td class="border border-gray-400 px-2 py-1 bg-gray-100"></td>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endwith %}
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                <div class="flex justify-between mt-4 text-sm">
+                    <div>
+                        <p><span class="font-medium">Gd:</span> Grande Salle</p>
+                        <p><span class="font-medium">NB:</span> Nouveau Bâtiment</p>
+                    </div>
+                    <div class="text-right">
+                        <p>( Valable à partir du 22 Avril 2024 )</p>
+                        <p class="mt-2">
+                            <span class="font-medium">Chef de Département DL</span><br>
+                            M. Moustapha KABA
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

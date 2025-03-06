@@ -1,0 +1,45 @@
+<!-- templates/admin/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Tableau de bord de l'administrateur</h1>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Étudiants</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ nombre_etudiants }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Enseignants</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ nombre_enseignants }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-header">Classes</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ nombre_classes }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">Départements</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ nombre_departements }}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ajoutez d'autres sections ou fonctionnalités ici -->
+</div>
+{% endblock %}

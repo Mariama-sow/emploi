@@ -1,0 +1,230 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="card shadow-lg">
+        <div class="bg-gradient-to-r from-blue-700 to-blue-600 text-white rounded-t-lg">
+            <h3 class="text-center text-2xl font-bold py-4 px-6">
+                <i class="fas fa-user-plus mr-2"></i>Inscription
+            </h3>
+        </div>
+        <div class="p-6">
+            {% if form.non_field_errors %}
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="ml-3">
+                        {% for error in form.non_field_errors %}
+                            <p class="text-sm">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {% for field in form %}
+                        {% if field.name != 'matricule' and field.name != 'specialite' and field.name != 'role' and field.name != 'classe' and field.name != 'departement' %}
+                        <div class="form-group">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2">{{ field.label_tag }}</label>
+                            <div class="relative">
+                                {{ field }}
+                                {% if field.name == "username" %}
+                                <i class="fas fa-user absolute right-3 top-3 text-gray-400"></i>
+                                {% elif field.name == "email" %}
+                                <i class="fas fa-envelope absolute right-3 top-3 text-gray-400"></i>
+                                {% elif field.name == "password1" or field.name == "password2" %}
+                                <i class="fas fa-lock absolute right-3 top-3 text-gray-400"></i>
+                                {% endif %}
+                            </div>
+                            {% if field.help_text %}
+                                <small class="form-text text-gray-500 text-xs">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% if field.errors %}
+                            <div class="text-red-500 text-sm mt-1">
+                                {{ field.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                
+                <!-- Champ de rôle avec design amélioré -->
+                <div class="form-group mt-6">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2">Type de compte</label>
+                    <div class="flex space-x-4">
+                        <div class="flex-1">
+                            <input type="radio" id="role_etudiant" name="role" value="etudiant" class="hidden peer" {% if form.role.value == 'etudiant' %}checked{% endif %}>
+                            <label for="role_etudiant" class="flex flex-col items-center justify-center p-4 text-gray-500 bg-white rounded-lg border border-gray-200 cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 hover:bg-gray-50">
+                                <i class="fas fa-user-graduate text-3xl mb-2"></i>
+                                <div class="w-full text-center">
+                                    <div class="font-semibold">Étudiant</div>
+                                    <div class="text-xs">Accès au planning des cours</div>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="flex-1">
+                            <input type="radio" id="role_enseignant" name="role" value="enseignant" class="hidden peer" {% if form.role.value == 'enseignant' %}checked{% endif %}>
+                            <label for="role_enseignant" class="flex flex-col items-center justify-center p-4 text-gray-500 bg-white rounded-lg border border-gray-200 cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 hover:bg-gray-50">
+                                <i class="fas fa-chalkboard-teacher text-3xl mb-2"></i>
+                                <div class="w-full text-center">
+                                    <div class="font-semibold">Enseignant</div>
+                                    <div class="text-xs">Gestion des cours et disponibilités</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Champ département pour les étudiants -->
+                <div class="form-group transition-all duration-300" id="departement-field" style="display: none;">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2" for="id_departement">Département</label>
+                    <div class="relative">
+                        {{ form.departement }}
+                        <i class="fas fa-building absolute right-3 top-3 text-gray-400"></i>
+                    </div>
+                    {% if form.departement.errors %}
+                    <div class="text-red-500 text-sm mt-1">
+                        {{ form.departement.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Champ matricule pour les étudiants -->
+                <div class="form-group transition-all duration-300" id="matricule-field" style="display: none;">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2" for="id_matricule">Matricule</label>
+                    <div class="relative">
+                        {{ form.matricule }}
+                        <i class="fas fa-id-card absolute right-3 top-3 text-gray-400"></i>
+                    </div>
+                    <small class="form-text text-gray-500 text-xs">{{ form.matricule.help_text }}</small>
+                    {% if form.matricule.errors %}
+                    <div class="text-red-500 text-sm mt-1">
+                        {{ form.matricule.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Champ classe pour les étudiants -->
+                <!-- Champ classe -->
+                <div class="form-group transition-all duration-300" id="classe-field" style="display: none;">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2" for="id_classe">Classe</label>
+                    <div class="relative">
+                        {{ form.classe }}
+                        <i class="fas fa-id-card absolute right-3 top-3 text-gray-400"></i>
+                    </div>
+                    {% if form.classe.errors %}
+                    <div class="text-red-500 text-sm mt-1">
+                        {{ form.classe.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Champ spécialité pour les enseignants -->
+                <div class="form-group transition-all duration-300" id="specialite-field" style="display: none;">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2" for="id_specialite">Spécialité</label>
+                    <div class="relative">
+                        {{ form.specialite }}
+                        <i class="fas fa-book absolute right-3 top-3 text-gray-400"></i>
+                    </div>
+                    {% if form.specialite.errors %}
+                    <div class="text-red-500 text-sm mt-1">
+                        {{ form.specialite.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="mt-6">
+                    <button type="submit" class="btn-primary w-full flex justify-center items-center">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Créer mon compte
+                    </button>
+                </div>
+                
+                <div class="mt-4 text-center">
+                    <p class="text-gray-600">Déjà inscrit? <a href="{% url 'login' %}" class="text-blue-600 hover:text-blue-800 font-medium">Se connecter</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var roleEtudiantRadio = document.getElementById('role_etudiant');
+    var roleEnseignantRadio = document.getElementById('role_enseignant');
+    var matriculeField = document.getElementById('matricule-field');
+    var classeField = document.getElementById('classe-field');
+    var specialiteField = document.getElementById('specialite-field');
+    var departementField = document.getElementById('departement-field');
+
+    function toggleFields() {
+        if (roleEtudiantRadio.checked) {
+            matriculeField.style.display = 'block';
+            classeField.style.display = 'block';
+            departementField.style.display = 'block';
+            specialiteField.style.display = 'none';
+        } else if (roleEnseignantRadio.checked) {
+            classeField.style.display = 'none';
+            matriculeField.style.display = 'none';
+            departementField.style.display = 'none';
+            specialiteField.style.display = 'block';
+        } else {
+            classeField.style.display = 'none';
+            matriculeField.style.display = 'none';
+            departementField.style.display = 'none';
+            specialiteField.style.display = 'none';
+        }
+    }
+
+    // Initial toggle
+    toggleFields();
+
+    // Toggle on change
+    roleEtudiantRadio.addEventListener('change', toggleFields);
+    roleEnseignantRadio.addEventListener('change', toggleFields);
+
+    // Filtrer les classes en fonction du département sélectionné
+    var departementSelect = document.getElementById('id_departement');
+    var classeSelect = document.getElementById('id_classe');
+
+    if (departementSelect && classeSelect) {
+            departementSelect.addEventListener('change', function() {
+                var departementId = this.value;
+                if (departementId) {
+                    fetch(`/account/get-classes/?departement_id=${departementId}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erreur lors de la récupération des classes');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            classeSelect.innerHTML = '';
+                            data.classes.forEach(classe => {
+                                var option = document.createElement('option');
+                                option.value = classe.id;
+                                option.text = classe.nom_classe;
+                                classeSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            classeSelect.innerHTML = '';
+                        });
+                } else {
+                    classeSelect.innerHTML = '';
+                }
+            });
+
+
+    }
+});
+</script>
+{% endblock %}

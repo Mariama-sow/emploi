@@ -1,0 +1,72 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg">
+        <div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Ajouter une Non-disponibilité
+            </h2>
+        </div>
+        <form method="post" class="mt-8 space-y-6">
+            {% csrf_token %}
+            
+            <div class="rounded-md shadow-sm -space-y-px">
+                <div class="mb-4">
+                    <label for="{{ form.date.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Jour
+                    </label>
+                    {{ form.jour }}
+                    {% if form.jour.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.jour.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="{{ form.heure_debut.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Heure de début
+                        </label>
+                        {{ form.heure_debut }}
+                        {% if form.heure_debut.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.heure_debut.errors }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label for="{{ form.heure_fin.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Heure de fin
+                        </label>
+                        {{ form.heure_fin }}
+                        {% if form.heure_fin.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.heure_fin.errors }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <label for="{{ form.raison.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Raison
+                    </label>
+                    {{ form.raison }}
+                    {% if form.raison.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.raison.errors }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Ajouter
+                </button>
+            </div>
+        </form>
+        
+        <div class="text-center">
+            <a href="{% url 'enseignant_dashboard' %}" class="text-sm text-blue-600 hover:text-blue-800">
+                Retour au tableau de bord
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
